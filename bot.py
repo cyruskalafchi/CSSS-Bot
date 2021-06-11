@@ -44,7 +44,7 @@ async def leaderboard(ctx):
     count = 1
 
     for user in top_users:
-        output = str(count) + ": <@" + str(user[1]) + "> (" + display_points(user[2]) + ")"
+        output = ouput + str(count) + ": <@" + str(user[1]) + "> (" + display_points(user[2]) + ") \n"
         count += 1
 
     if len(output) < 1:
