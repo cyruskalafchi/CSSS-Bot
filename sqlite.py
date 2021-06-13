@@ -1,3 +1,6 @@
+# SQLite Alternative to Mongo
+# NOTE: This file is no longer in use, and has been replaced by mongo.py
+
 import sqlite3
 
 CREATE_USERPOINTS = "CREATE TABLE IF NOT EXISTS userpoints (id INTEGER PRIMARY KEY, user INTEGER, points INTEGER);"
