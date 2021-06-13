@@ -7,6 +7,8 @@ from discord import message
 from discord.user import User
 from dotenv import load_dotenv
 from discord.ext import commands
+from discord.ext.commands import ConversionError
+
 import mongo
 
 load_dotenv()
@@ -55,11 +57,12 @@ async def leaderboard(ctx):
 @bot.command(name='edit')
 @commands.has_role('Admin')
 async def edit(ctx, user: User, points: int):
-    try:
-        mongo.update_points(user.id, points)
-        await ctx.send('Modified ' + user.mention + '\'s points by ' + str(points))
+    mongo.update_points(user.id, points)
+    await ctx.send('Modified ' + user.mention + '\'s points by ' + str(points))
 
-    except:
+@edit.error
+async def info_error(ctx, error):
+    if isinstance(error, commands.BadArgument):
         await ctx.send('Invalid input; use %edit @User points')
 
 @bot.command(name="help")
