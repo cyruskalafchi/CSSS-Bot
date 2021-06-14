@@ -25,6 +25,7 @@ def update_points(id, points):
         collection.insert_one({'id': id, 'points': points})
 
 def get_top_users(range):
+    sort_by_points()
     return collection.find().limit(range)
 
 
