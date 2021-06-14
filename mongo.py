@@ -12,7 +12,7 @@ db = cluster[DATABASE]
 collection = db[COLLECTION]
 
 def sort_by_points():
-    collection.find().sort("points")
+    return collection.find().sort("points")
 
 def find_points(id):
     member = collection.find_one({'id':id})
@@ -25,7 +25,6 @@ def update_points(id, points):
         collection.insert_one({'id': id, 'points': points})
 
 def get_top_users(range):
-    sort_by_points()
-    return collection.find().limit(range)
+    return sort_by_points().limit(range)
 
 
