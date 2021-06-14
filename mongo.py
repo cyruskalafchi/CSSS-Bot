@@ -12,7 +12,7 @@ db = cluster[DATABASE]
 collection = db[COLLECTION]
 
 def sort_by_points():
-    return collection.find().sort("points")
+    return collection.find().sort("points", pymongo.DESCENDING)
 
 def find_points(id):
     member = collection.find_one({'id':id})
