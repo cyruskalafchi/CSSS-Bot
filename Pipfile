@@ -8,6 +8,7 @@ name = "pypi"
 python-dotenv = "*"
 discord = "*"
 pymongo = {extras = ["srv"], version = "*"}
+asyncio = "*"
 
 [dev-packages]
 

@@ -2,6 +2,8 @@
 # bot.py
 
 import os
+import asyncio
+
 import discord
 from discord import message
 from discord.user import User
@@ -14,7 +16,7 @@ import mongo
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-bot = commands.Bot(command_prefix='%', help_command = None)
+bot = commands.Bot(command_prefix='%', help_command = None, case_insensitive=True)
 
 
 @bot.event
@@ -54,6 +56,10 @@ async def leaderboard(ctx):
     embed.add_field(name="Leaderboard", value=output, inline=False)
     await ctx.send(embed=embed)
 
+@bot.command(name='ping')
+async def ping(ctx):
+    await ctx.send('Pong! Took __**' + str(round(bot.latency, 2)) + '**__ ms to send back.')
+
 @bot.command(name='edit')
 @commands.has_role('Admin')
 async def edit(ctx, user: User, points: int):
@@ -65,10 +71,16 @@ async def info_error(ctx, error):
     if isinstance(error, commands.BadArgument):
         await ctx.send('Invalid input; use %edit @User points')
 
-@bot.command(name="help")
+@bot.command(name='purge')
+@commands.has_role('Admin')
+async def purge(ctx, number):
+    await ctx.channel.purge(limit=int(number))
+
+@bot.command(name='help')
 async def help(ctx):
    embed=discord.Embed(title="Cubey", description="A simple bot for the UBC CSSS Discord", color=0x0096ff)
-   embed.add_field(name="Commands", value="%leaderboard \n %points", inline=False)
+   embed.add_field(name="Public Commands", value="%leaderboard \n %points \n %ping", inline=False)
+   embed.add_field(name="Admin Commands", value="%edit \n %purge", inline=False)
    await ctx.send(embed=embed)
 
 def display_points(points):
