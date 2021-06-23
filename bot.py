@@ -24,6 +24,24 @@ async def on_ready():
     print('Connected to Discord!')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="%help"))
 
+
+@bot.event
+async def on_raw_reaction_add(payload):
+    react_role = mongo.reactable_message(payload.message_id)
+    react_emoji = payload.emoji.name
+
+    if react_role != None:
+        emoji_array = react_role['emojis']
+
+        if react_emoji in emoji_array:
+            role_array = react_role['roles']
+            role_name = role_array[(emoji_array.index(react_emoji))]
+            
+            member = payload.member
+            role = discord.utils.get(member.guild.roles, name=role_name)
+            await member.add_roles(role)
+
+
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
@@ -70,6 +88,12 @@ async def edit(ctx, user: User, points: int):
 async def info_error(ctx, error):
     if isinstance(error, commands.BadArgument):
         await ctx.send('Invalid input; use %edit @User points')
+
+# @bot.command(name='reactrole add')
+# @commands.has_role('Admin')
+# async def edit(ctx, message: int, points: int):
+#     mongo.update_points(user.id, points)
+#     await ctx.send('Modified ' + user.mention + '\'s points by ' + str(points))
 
 @bot.command(name='purge')
 @commands.has_role('Admin')
