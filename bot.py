@@ -59,7 +59,7 @@ async def points(ctx):
 
 @bot.command(name='leaderboard')
 async def leaderboard(ctx):
-    top_users = mongo.get_top_users(5)
+    top_users = mongo.get_top_users(10)
     output = ""
     count = 1
 
