@@ -6,6 +6,7 @@ import asyncio
 
 import discord
 from discord import message
+from discord.flags import Intents
 from discord.user import User
 from dotenv import load_dotenv
 from discord.ext import commands
@@ -16,7 +17,11 @@ import mongo
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-bot = commands.Bot(command_prefix='%', help_command = None, case_insensitive=True)
+intents = discord.Intents.default()
+intents.members = True 
+
+client = discord.Client(intents=intents)
+bot = commands.Bot(command_prefix='%', help_command=None, case_insensitive=True, intents=intents)
 
 
 @bot.event
@@ -24,9 +29,9 @@ async def on_ready():
     print('Connected to Discord!')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="%help"))
 
-
 @bot.event
 async def on_raw_reaction_add(payload):
+    # On message react, get react role data from DB
     react_role = mongo.reactable_message(payload.message_id)
     react_emoji = payload.emoji.name
 
@@ -34,6 +39,7 @@ async def on_raw_reaction_add(payload):
         emoji_array = react_role['emojis']
 
         if react_emoji in emoji_array:
+            # Assign role at corresponding emoji's index
             role_array = react_role['roles']
             role_name = role_array[(emoji_array.index(react_emoji))]
             
@@ -41,6 +47,31 @@ async def on_raw_reaction_add(payload):
             role = discord.utils.get(member.guild.roles, name=role_name)
             await member.add_roles(role)
 
+@bot.event
+async def on_raw_reaction_remove(payload):
+    # On react removal, get react role data from DB
+    react_role = mongo.reactable_message(payload.message_id)
+    react_emoji = payload.emoji.name
+
+    if react_role != None:
+        emoji_array = react_role['emojis']
+
+        if react_emoji in emoji_array:
+            # Remove role at corresponding emoji's index
+            role_array = react_role['roles']
+            role_name = role_array[(emoji_array.index(react_emoji))]
+            
+            guild = bot.get_guild(payload.guild_id)
+            member = guild.get_member(payload.user_id)
+            role = discord.utils.get(member.guild.roles, name=role_name)
+            await member.remove_roles(role)
+
+@bot.event
+async def on_raw_message_delete(payload):
+    deleted_react_role = mongo.reactable_message(payload.message_id)
+
+    if deleted_react_role != None:
+        mongo.delete_react_role(deleted_react_role)
 
 @bot.event
 async def on_message(message):
@@ -88,12 +119,6 @@ async def edit(ctx, user: User, points: int):
 async def info_error(ctx, error):
     if isinstance(error, commands.BadArgument):
         await ctx.send('Invalid input; use %edit @User points')
-
-# @bot.command(name='reactrole add')
-# @commands.has_role('Admin')
-# async def edit(ctx, message: int, points: int):
-#     mongo.update_points(user.id, points)
-#     await ctx.send('Modified ' + user.mention + '\'s points by ' + str(points))
 
 @bot.command(name='purge')
 @commands.has_role('Admin')
