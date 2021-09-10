@@ -79,7 +79,7 @@ async def leaderboard(ctx):
 
 @bot.command(name='ping')
 async def ping(ctx):
-    await ctx.send('Pong! Took __**' + str(round(bot.latency, 2)) + '**__ ms to send back.')
+    await ctx.send('Pong! Took __**' + str(round(bot.latency * 1000, 2)) + '**__ ms to send back.')
 
 @bot.command(name='edit')
 @commands.has_role('Admin')
