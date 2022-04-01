@@ -98,4 +98,8 @@ async def info_error(ctx, error):
 async def purge(ctx, number):
     await ctx.channel.purge(limit=int(number))
 
+@bot.command(name='selfpurge')
+async def purge(ctx, number):
+    await ctx.channel.purge(limit=int(number), check=lambda message: message.author == ctx.author)
+
 bot.run(TOKEN)
