@@ -42,8 +42,8 @@ async def on_message(message):
 @bot.command(name='help')
 async def help(ctx):
    embed=discord.Embed(title="Cubey", description="A simple bot for the UBC CSSS Discord", color=0x0096ff)
-   embed.add_field(name="Public Commands", value="%leaderboard \n %points \n %ping", inline=False)
-   embed.add_field(name="Admin Commands", value="%edit \n %purge", inline=False)
+   embed.add_field(name="Public Commands", value="%leaderboard \n %points \n %ping \n %selfpurge", inline=False)
+   embed.add_field(name="Admin Commands", value="%edit \n %allpurge", inline=False)
    await ctx.send(embed=embed)
 
 
