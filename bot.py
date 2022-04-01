@@ -100,6 +100,6 @@ async def purge(ctx, number):
 
 @bot.command(name='selfpurge')
 async def purge(ctx, number):
-    await ctx.channel.purge(limit=int(number), check=lambda message: message.author == ctx.author)
+    await ctx.channel.purge(limit=int(number)+1, check=lambda message: message.author == ctx.author)
 
 bot.run(TOKEN)
