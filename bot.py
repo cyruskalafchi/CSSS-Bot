@@ -93,7 +93,7 @@ async def info_error(ctx, error):
 
 
 # ======== Moderation Functions ========
-@bot.command(name='purge')
+@bot.command(name='allpurge')
 @commands.has_role('Admin')
 async def purge(ctx, number):
     await ctx.channel.purge(limit=int(number))
